@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kaviraj-j/faketory/internal/service"
+	"github.com/kaviraj-j/faketory/internal/types"
 )
 
 type MockDataHandler struct {
@@ -18,38 +18,107 @@ func NewMockDataHandler(s *service.MockDataService) *MockDataHandler {
 	}
 }
 
-func (h *MockDataHandler) GetPosts(ctx *gin.Context) {
-	countStr := ctx.Query("count")
-	count, _ := strconv.Atoi(countStr)
-	posts, _ := h.mockDataService.GetPosts(count)
-	ctx.JSON(http.StatusOK, gin.H{
-		"data": posts,
-	})
+// Helper function to parse query parameters
+func (h *MockDataHandler) parseQueryParams(ctx *gin.Context) types.QueryParams {
+	return service.ParseQueryParams(
+		ctx.Query("count"),
+		ctx.Query("userId"),
+		ctx.Query("postId"),
+		ctx.Param("id"),
+	)
 }
 
-func (h *MockDataHandler) GetPost(ctx *gin.Context) {
-	idStr := ctx.Param("id")
-	id, _ := strconv.Atoi(idStr)
-	post, _ := h.mockDataService.GetPost(id)
-	ctx.JSON(http.StatusOK, gin.H{
-		"data": post,
-	})
-}
-
+// User handlers
 func (h *MockDataHandler) GetUsers(ctx *gin.Context) {
-	countStr := ctx.Query("count")
-	count, _ := strconv.Atoi(countStr)
-	users, _ := h.mockDataService.GetUsers(count)
-	ctx.JSON(http.StatusOK, gin.H{
-		"data": users,
-	})
+	params := h.parseQueryParams(ctx)
+	users := h.mockDataService.GetUsers(params)
+	ctx.JSON(http.StatusOK, users)
 }
 
 func (h *MockDataHandler) GetUser(ctx *gin.Context) {
-	idStr := ctx.Param("id")
-	id, _ := strconv.Atoi(idStr)
-	user, _ := h.mockDataService.GetUser(id)
-	ctx.JSON(http.StatusOK, gin.H{
-		"data": user,
-	})
+	params := h.parseQueryParams(ctx)
+	user, found := h.mockDataService.GetUser(params.ID)
+	if !found {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"error": "User not found",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, user)
+}
+
+// Post handlers
+func (h *MockDataHandler) GetPosts(ctx *gin.Context) {
+	params := h.parseQueryParams(ctx)
+	posts := h.mockDataService.GetPosts(params)
+	ctx.JSON(http.StatusOK, posts)
+}
+
+func (h *MockDataHandler) GetPost(ctx *gin.Context) {
+	params := h.parseQueryParams(ctx)
+	post, found := h.mockDataService.GetPost(params.ID)
+	if !found {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"error": "Post not found",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, post)
+}
+
+// Todo handlers
+func (h *MockDataHandler) GetTodos(ctx *gin.Context) {
+	params := h.parseQueryParams(ctx)
+	todos := h.mockDataService.GetTodos(params)
+	ctx.JSON(http.StatusOK, todos)
+}
+
+func (h *MockDataHandler) GetTodo(ctx *gin.Context) {
+	params := h.parseQueryParams(ctx)
+	todo, found := h.mockDataService.GetTodo(params.ID)
+	if !found {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"error": "Todo not found",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, todo)
+}
+
+// Album handlers
+func (h *MockDataHandler) GetAlbums(ctx *gin.Context) {
+	params := h.parseQueryParams(ctx)
+	albums := h.mockDataService.GetAlbums(params)
+	ctx.JSON(http.StatusOK, albums)
+}
+
+func (h *MockDataHandler) GetAlbum(ctx *gin.Context) {
+	params := h.parseQueryParams(ctx)
+	album, found := h.mockDataService.GetAlbum(params.ID)
+	if !found {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"error": "Album not found",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, album)
+}
+
+// Comment handlers
+func (h *MockDataHandler) GetComments(ctx *gin.Context) {
+	params := h.parseQueryParams(ctx)
+	comments := h.mockDataService.GetComments(params)
+	ctx.JSON(http.StatusOK, comments)
+}
+
+func (h *MockDataHandler) GetComment(ctx *gin.Context) {
+	params := h.parseQueryParams(ctx)
+	comment, found := h.mockDataService.GetComment(params.ID)
+	if !found {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"error": "Comment not found",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, comment)
 }

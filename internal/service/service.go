@@ -9,50 +9,75 @@ type MockDataService struct {
 }
 
 func NewMockDataService() *MockDataService {
-	users, posts := getMockData()
+	users, posts, todos, albums, comments := getMockData()
 
 	return &MockDataService{
 		mockData: types.MockData{
-			Users: users,
-			Posts: posts,
+			Users:    users,
+			Posts:    posts,
+			Todos:    todos,
+			Albums:   albums,
+			Comments: comments,
 		},
 	}
 }
 
-func (s *MockDataService) GetUsers(count int) ([]types.User, error) {
-	users := make([]types.User, 0, count)
-	for _, u := range s.mockData.Users {
-		users = append(users, u)
-	}
-	return users, nil
-}
-
-func (s *MockDataService) GetUser(id int) (types.User, error) {
-	for _, u := range s.mockData.Users {
-		if u.ID == id {
-			return u, nil
+func findByID[T any](items []T, id int, getID func(T) int) (T, bool) {
+	var zero T
+	for _, item := range items {
+		if getID(item) == id {
+			return item, true
 		}
 	}
-	u := s.mockData.Users[0]
-	u.ID = id
-	return u, nil
+	return zero, false
 }
 
-func (s *MockDataService) GetPosts(count int) ([]types.Post, error) {
-	posts := make([]types.Post, 0, count)
-	for _, p := range s.mockData.Posts {
-		posts = append(posts, p)
-	}
-	return posts, nil
+// User methods
+func (s *MockDataService) GetUsers(params types.QueryParams) []types.User {
+	users := s.mockData.Users
+	return users
 }
 
-func (s *MockDataService) GetPost(id int) (types.Post, error) {
-	for _, p := range s.mockData.Posts {
-		if p.ID == id {
-			return p, nil
-		}
-	}
-	p := s.mockData.Posts[0]
-	p.ID = id
-	return p, nil
+func (s *MockDataService) GetUser(id int) (types.User, bool) {
+	return findByID(s.mockData.Users, id, func(u types.User) int { return u.ID })
+}
+
+// Post methods
+func (s *MockDataService) GetPosts(params types.QueryParams) []types.Post {
+	posts := s.mockData.Posts
+	return posts
+}
+
+func (s *MockDataService) GetPost(id int) (types.Post, bool) {
+	return findByID(s.mockData.Posts, id, func(p types.Post) int { return p.ID })
+}
+
+// Todo methods
+func (s *MockDataService) GetTodos(params types.QueryParams) []types.Todo {
+	todos := s.mockData.Todos
+	return todos
+}
+
+func (s *MockDataService) GetTodo(id int) (types.Todo, bool) {
+	return findByID(s.mockData.Todos, id, func(t types.Todo) int { return t.ID })
+}
+
+// Album methods
+func (s *MockDataService) GetAlbums(params types.QueryParams) []types.Album {
+	albums := s.mockData.Albums
+	return albums
+}
+
+func (s *MockDataService) GetAlbum(id int) (types.Album, bool) {
+	return findByID(s.mockData.Albums, id, func(a types.Album) int { return a.ID })
+}
+
+// Comment methods
+func (s *MockDataService) GetComments(params types.QueryParams) []types.Comment {
+	comments := s.mockData.Comments
+	return comments
+}
+
+func (s *MockDataService) GetComment(id int) (types.Comment, bool) {
+	return findByID(s.mockData.Comments, id, func(c types.Comment) int { return c.ID })
 }

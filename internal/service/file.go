@@ -4,36 +4,39 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/kaviraj-j/faketory/internal/types"
 )
 
-func getMockData() (map[int]types.User, map[int]types.Post) {
+func getMockData() ([]types.User, []types.Post, []types.Todo, []types.Album, []types.Comment) {
 	filePath := getFilePath()
-	var users []types.User
-	var posts []types.Post
-	err := readData(filePath+"/users.json", &users)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = readData(filePath+"/posts.json", &posts)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return convertToMap(users), convertToMap(posts)
-}
 
-func convertToMap[T any](arr []T) map[int]T {
-	m := make(map[int]T)
-	for _, v := range arr {
-		switch t := any(v).(type) {
-		case types.User:
-			m[t.ID] = v
-		case types.Post:
-			m[t.ID] = v
+	// Data path mapping for generic loading
+	dataPaths := map[string]interface{}{
+		"users":    &[]types.User{},
+		"posts":    &[]types.Post{},
+		"todos":    &[]types.Todo{},
+		"albums":   &[]types.Album{},
+		"comments": &[]types.Comment{},
+	}
+
+	// Load all data files
+	for dataType, dataPtr := range dataPaths {
+		err := readData(filePath+"/"+dataType+".json", dataPtr)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
-	return m
+
+	// Extract the loaded data
+	users := *dataPaths["users"].(*[]types.User)
+	posts := *dataPaths["posts"].(*[]types.Post)
+	todos := *dataPaths["todos"].(*[]types.Todo)
+	albums := *dataPaths["albums"].(*[]types.Album)
+	comments := *dataPaths["comments"].(*[]types.Comment)
+
+	return users, posts, todos, albums, comments
 }
 
 func readData(path string, v any) error {
@@ -46,4 +49,35 @@ func readData(path string, v any) error {
 
 func getFilePath() string {
 	return os.Getenv("DATA_PATH")
+}
+
+// ParseQueryParams parses and validates query parameters
+func ParseQueryParams(countStr, userIDStr, postIDStr, idStr string) types.QueryParams {
+	params := types.QueryParams{}
+
+	if countStr != "" {
+		if count, err := strconv.Atoi(countStr); err == nil && count > 0 {
+			params.Count = count
+		}
+	}
+
+	if userIDStr != "" {
+		if userID, err := strconv.Atoi(userIDStr); err == nil && userID > 0 {
+			params.UserID = userID
+		}
+	}
+
+	if postIDStr != "" {
+		if postID, err := strconv.Atoi(postIDStr); err == nil && postID > 0 {
+			params.PostID = postID
+		}
+	}
+
+	if idStr != "" {
+		if id, err := strconv.Atoi(idStr); err == nil && id > 0 {
+			params.ID = id
+		}
+	}
+
+	return params
 }
