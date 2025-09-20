@@ -1,8 +1,21 @@
 package app
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+	"time"
+
+	"github.com/gin-gonic/gin"
+)
 
 func (app *App) setupRoutes(router *gin.Engine) {
+
+	// health route
+	router.GET("/health", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"message":   "OK",
+			"timestamp": time.Now(),
+		})
+	})
 
 	// Posts routes
 	router.GET("/posts", app.mockDataHandler.GetPosts)
