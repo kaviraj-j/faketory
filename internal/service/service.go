@@ -32,10 +32,30 @@ func findByID[T any](items []T, id int, getID func(T) int) (T, bool) {
 	return zero, false
 }
 
+func validateCount(count int) int {
+	if count <= 0 {
+		return 10 // default
+	}
+	if count > 100 {
+		return 100 // max limit
+	}
+	return count
+}
+
 // User methods
 func (s *MockDataService) GetUsers(params types.QueryParams) []types.User {
+	count := validateCount(params.Count)
 	users := s.mockData.Users
-	return users
+
+	if count >= len(users) {
+		result := make([]types.User, len(users))
+		copy(result, users)
+		return result
+	}
+
+	result := make([]types.User, count)
+	copy(result, users[:count])
+	return result
 }
 
 func (s *MockDataService) GetUser(id int) (types.User, bool) {
@@ -44,8 +64,18 @@ func (s *MockDataService) GetUser(id int) (types.User, bool) {
 
 // Post methods
 func (s *MockDataService) GetPosts(params types.QueryParams) []types.Post {
+	count := validateCount(params.Count)
 	posts := s.mockData.Posts
-	return posts
+
+	if count >= len(posts) {
+		result := make([]types.Post, len(posts))
+		copy(result, posts)
+		return result
+	}
+
+	result := make([]types.Post, count)
+	copy(result, posts[:count])
+	return result
 }
 
 func (s *MockDataService) GetPost(id int) (types.Post, bool) {
@@ -54,8 +84,18 @@ func (s *MockDataService) GetPost(id int) (types.Post, bool) {
 
 // Todo methods
 func (s *MockDataService) GetTodos(params types.QueryParams) []types.Todo {
+	count := validateCount(params.Count)
 	todos := s.mockData.Todos
-	return todos
+
+	if count >= len(todos) {
+		result := make([]types.Todo, len(todos))
+		copy(result, todos)
+		return result
+	}
+
+	result := make([]types.Todo, count)
+	copy(result, todos[:count])
+	return result
 }
 
 func (s *MockDataService) GetTodo(id int) (types.Todo, bool) {
@@ -64,8 +104,18 @@ func (s *MockDataService) GetTodo(id int) (types.Todo, bool) {
 
 // Album methods
 func (s *MockDataService) GetAlbums(params types.QueryParams) []types.Album {
+	count := validateCount(params.Count)
 	albums := s.mockData.Albums
-	return albums
+
+	if count >= len(albums) {
+		result := make([]types.Album, len(albums))
+		copy(result, albums)
+		return result
+	}
+
+	result := make([]types.Album, count)
+	copy(result, albums[:count])
+	return result
 }
 
 func (s *MockDataService) GetAlbum(id int) (types.Album, bool) {
@@ -74,8 +124,18 @@ func (s *MockDataService) GetAlbum(id int) (types.Album, bool) {
 
 // Comment methods
 func (s *MockDataService) GetComments(params types.QueryParams) []types.Comment {
+	count := validateCount(params.Count)
 	comments := s.mockData.Comments
-	return comments
+
+	if count >= len(comments) {
+		result := make([]types.Comment, len(comments))
+		copy(result, comments)
+		return result
+	}
+
+	result := make([]types.Comment, count)
+	copy(result, comments[:count])
+	return result
 }
 
 func (s *MockDataService) GetComment(id int) (types.Comment, bool) {
