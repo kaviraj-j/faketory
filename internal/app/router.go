@@ -17,6 +17,11 @@ func (app *App) setupRoutes(router *gin.Engine) {
 		})
 	})
 
+	// documentation
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.File("static/index.html")
+	})
+
 	// Posts routes
 	router.GET("/posts", app.mockDataHandler.GetPosts)
 	router.GET("/posts/:id", app.mockDataHandler.GetPost)
