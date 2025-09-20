@@ -1,13 +1,22 @@
 package service
 
-import "github.com/kaviraj-j/faketory/internal/types"
+import (
+	"github.com/kaviraj-j/faketory/internal/types"
+)
 
 type MockDataService struct {
 	mockData types.MockData
 }
 
 func NewMockDataService() *MockDataService {
-	return &MockDataService{}
+	users, posts := getMockData()
+
+	return &MockDataService{
+		mockData: types.MockData{
+			Users: users,
+			Posts: posts,
+		},
+	}
 }
 
 func (s *MockDataService) GetUsers(count int) ([]types.User, error) {
