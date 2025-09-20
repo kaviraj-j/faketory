@@ -48,7 +48,7 @@ func readData(path string, v any) error {
 }
 
 func getFilePath() string {
-	return os.Getenv("DATA_PATH")
+	return "data"
 }
 
 // ParseQueryParams parses and validates query parameters
