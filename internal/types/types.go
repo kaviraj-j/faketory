@@ -1,5 +1,7 @@
 package types
 
+import "encoding/json"
+
 type Config struct {
 	AppUrl  string
 	AppPort string
@@ -62,7 +64,7 @@ type DataPath struct {
 }
 
 type MockDataBody struct {
-	DataKey string `json:"dataKey"`
-	Count   string `json:"count"`
-	Schema  string `json:"schema"`
+	DataKey string          `json:"dataKey"`
+	Count   int             `json:"count"`
+	Schema  json.RawMessage `json:"schema"`
 }

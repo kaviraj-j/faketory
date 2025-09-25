@@ -42,4 +42,7 @@ func (app *App) setupRoutes(router *gin.Engine) {
 	router.GET("/comments", app.mockDataHandler.GetComments)
 	router.GET("/comments/:id", app.mockDataHandler.GetComment)
 
+	// Generate route
+	router.POST("/generate", app.mockDataHandler.GenerateData)
+
 }

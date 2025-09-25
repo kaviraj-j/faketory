@@ -122,3 +122,23 @@ func (h *MockDataHandler) GetComment(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, comment)
 }
+
+func (h *MockDataHandler) GenerateData(ctx *gin.Context) {
+	var mockDataDetails types.MockDataBody
+	if err := ctx.BindJSON(&mockDataDetails); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"type":    "error",
+			"message": "error in parsing body",
+		})
+		return
+	}
+	data, err := h.mockDataService.GenerateData(mockDataDetails.Schema, mockDataDetails.Count)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"type":    "error",
+			"message": err,
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, data)
+}
