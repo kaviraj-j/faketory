@@ -60,3 +60,9 @@ type DataPath struct {
 	Path     string
 	DataType string
 }
+
+type MockDataBody struct {
+	DataKey string `json:"dataKey"`
+	Count   string `json:"count"`
+	Schema  string `json:"schema"`
+}
